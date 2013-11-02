@@ -1,0 +1,9 @@
+<hibernate-configuration>
+  <session-factory>
+    <!-- ..... -->
+    <mapping class="org.adenisen.Entity.Loan"></mapping>
+    <mapping class="org.adenisen.Entity.LoanHistory"></mapping>
+    <mapping class="org.adenisen.Entity.Account"></mapping>
+    <mapping class="org.adenisen.Entity.User"></mapping>
+  </session-factory>
+</hibernate-configuration>
