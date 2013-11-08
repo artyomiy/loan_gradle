@@ -1,4 +1,4 @@
-package org.gradle;
+package org.adenisen;
 
 import org.junit.runner.RunWith;
 import cucumber.api.junit.Cucumber;

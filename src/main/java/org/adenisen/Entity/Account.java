@@ -4,7 +4,13 @@ import java.util.ArrayList;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -13,9 +19,10 @@ import javax.persistence.Transient;
 public class Account implements java.io.Serializable{
 	private Long id;
 	private ArrayList<Loan> loanList = new ArrayList<Loan>();
+	private Person person;
 
 	@Id
-	@Column(name = "ID", unique = true, nullable = false)
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	public Long getId() {
 		return id;
 	}
@@ -24,7 +31,8 @@ public class Account implements java.io.Serializable{
 		this.id = id;
 	}
 	
-	@Transient
+	@OneToMany(fetch=FetchType.LAZY)
+    @JoinColumn(name="ACCOUNT_ID", nullable=false)
 	public ArrayList<Loan> getLoan() {
 		return loanList;
 	}
@@ -38,5 +46,15 @@ public class Account implements java.io.Serializable{
 	@Transient
 	public void addLoan(Loan loan){
 		this.loanList.add(loan);
+	}
+
+	@OneToOne(fetch=FetchType.EAGER)
+    @JoinColumn(name="PERSON_ID", nullable=false)
+	public Person getPerson() {
+		return person;
+	}
+
+	public void setPerson(Person person) {
+		this.person = person;
 	}
 }

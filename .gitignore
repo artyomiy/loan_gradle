@@ -1,0 +1,8 @@
+build/
+bin/
+.settings/
+.gradle/
+.classpath
+.DS_Strore
+.project
+test.h2.db

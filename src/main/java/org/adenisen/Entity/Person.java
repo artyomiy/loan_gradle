@@ -1,24 +1,23 @@
 package org.adenisen.Entity;
 
+import java.beans.Transient;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.apache.commons.collections.list.GrowthList;
-
 @Entity
-@Table(name = "USER")
-public class User {
+@Table(name = "PERSON")
+public class Person {
 	private Long id;
     private String name;
-    private Account account;
+    private String IP;
 
-    public User() {
+    public Person() {
     }
-	public User(String name) {
+	public Person(String name) {
         this.name = name;
-        new GrowthList();
     }
 	
 	@Id
@@ -35,13 +34,18 @@ public class User {
     public String getName() {
         return name;
     }
+	
+	public void setName(String name) {
+        this.name = name;
+    }
     
-    public Account getAccount() {
-		return account;
+	
+	@Transient
+	public String getIp() {
+		return IP;
 	}
-
-	public void setAccount(Account account) {
-		this.account = account;
+	public void setIp(String ip) {
+		this.IP = ip;
 	}
 
 }

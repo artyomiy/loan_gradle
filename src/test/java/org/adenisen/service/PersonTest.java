@@ -1,6 +1,6 @@
-package org.gradle;
+package org.adenisen.service;
 
-import org.adenisen.Entity.User;
+import org.adenisen.Entity.Person;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
 public class PersonTest {
     @Test
     public void canConstructAPersonWithAName() {
-        User person = new User("Larry");
+        Person person = new Person("Larry");
         assertEquals("Larry", person.getName());
     }
     
