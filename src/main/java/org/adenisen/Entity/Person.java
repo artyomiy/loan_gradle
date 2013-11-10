@@ -2,9 +2,15 @@ package org.adenisen.Entity;
 
 import java.beans.Transient;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -13,6 +19,7 @@ public class Person {
 	private Long id;
     private String name;
     private String IP;
+    private Account account;
 
     public Person() {
     }
@@ -21,7 +28,8 @@ public class Person {
     }
 	
 	@Id
-	@Column(name = "ID", unique = true, nullable = false)
+	@Column(name="ID")
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	public Long getId() {
 		return id;
 	}
@@ -46,6 +54,14 @@ public class Person {
 	}
 	public void setIp(String ip) {
 		this.IP = ip;
+	}
+	
+	@OneToOne(fetch=FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "person")
+	public Account getAccount() {
+		return account;
+	}
+	public void setAccount(Account account) {
+		this.account = account;
 	}
 
 }

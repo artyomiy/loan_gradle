@@ -42,6 +42,8 @@ dependencies {
     providedCompile 'javax.servlet:servlet-api:2.5'
    	compile 'org.springframework:spring-webmvc:3.2.2.RELEASE'
    	runtime 'javax.servlet:jstl:1.1.2'
+   	compile 'com.h2database:h2:1.2.140'
+   	compile 'javassist:javassist:3.12.1.GA'
 }
 
 test {
@@ -53,6 +55,10 @@ jettyRunWar.contextPath = ''
 jettyRunWar.doFirst {
   h2start.execute()
 }
+
+ test.doFirst { 
+	h2start.execute()
+  }
 
 h2 {
     tcpPort = 9092

@@ -3,7 +3,9 @@ package org.adenisen.Entity;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -20,6 +23,7 @@ import javax.persistence.Transient;
 public class Loan implements java.io.Serializable{
 	public static final double MAX_AMOUNT = 500.0;
 	public static final int MAX_APP_COUNT_FROM_IP 	= 3;
+	public static final int EXTEND_WEEKS_COUNT 	= 1;
 	public static final String DANGER_TIME_FROM	= "00:00";
 	public static final String DANGER_TIME_TO	= "06:00";
 	
@@ -28,7 +32,8 @@ public class Loan implements java.io.Serializable{
 	private Date termEnd;
 	private Date termStart;
 	private Double	interestIndex = 1.0;
-	private ArrayList<LoanHistory> loanHistoryList = new ArrayList<LoanHistory>();
+	private List<LoanHistory> loanHistoryList = new ArrayList<LoanHistory>();
+	private Account account;
 	private int termMonth;
 	
 	public Loan(){
@@ -44,6 +49,7 @@ public class Loan implements java.io.Serializable{
 	}
 	
 	@Id
+	@Column(name="ID")
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	public Long getId() {
 		return id;
@@ -67,6 +73,7 @@ public class Loan implements java.io.Serializable{
 	public void setTermEnd(Date termEnd) {
 		this.termEnd = termEnd;
 	}
+	
 	@Column(name="TERM_START")
 	public Date getTermStart() {
 		return termStart;
@@ -78,9 +85,8 @@ public class Loan implements java.io.Serializable{
 	/**
 	 * @return the loanHistoryList
 	 */
-	@OneToMany(fetch=FetchType.LAZY)
-    @JoinColumn(name="LOAN_ID", nullable=false)
-	public ArrayList<LoanHistory> getLoanHistoryList() {
+	@OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "loan")
+	public List<LoanHistory> getLoanHistoryList() {
 		return loanHistoryList;
 	}
 
@@ -113,5 +119,15 @@ public class Loan implements java.io.Serializable{
 
 	public void setTermMonth(int termMonth) {
 		this.termMonth = termMonth;
+	}
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "ACCOUNT_ID", nullable = false)
+	public Account getAccount() {
+		return account;
+	}
+
+	public void setAccount(Account account) {
+		this.account = account;
 	}
 }

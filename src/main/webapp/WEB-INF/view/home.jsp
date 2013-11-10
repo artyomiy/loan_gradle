@@ -46,6 +46,7 @@
 	        .nextAll(".output:first")
 	          .html(data.value.toFixed(0));
 	    });
+	  
   	</script>
   </body>
 </html>

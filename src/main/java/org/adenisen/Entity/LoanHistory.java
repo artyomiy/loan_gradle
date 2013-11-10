@@ -4,9 +4,12 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -16,13 +19,18 @@ public class LoanHistory implements java.io.Serializable {
 	public static final int LOAN_EXTENDED 	= 2;	//history type
 	
 	private Long id;
-	private Date changeDate;
+	private Date created;
 	private Date oldTermEnd;
 	private int extendedByWeeks;
 	private int historyType;
 	private String personIP;
+	private Loan loan;
+	
+	public LoanHistory(){
+	}
 	
 	@Id
+	@Column(name="ID")
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	public Long getId() {
 		return id;
@@ -35,16 +43,16 @@ public class LoanHistory implements java.io.Serializable {
 	/**
 	 * @return the changeDate
 	 */
-	@Column(name="CHANGE_DATE")
-	public Date getChangeDate() {
-		return changeDate;
+	@Column(name="CREATED")
+	public Date getCreated() {
+		return created;
 	}
 
 	/**
-	 * @param changeDate the changeDate to set
+	 * @param created the changeDate to set
 	 */
-	public void setChangeDate(Date changeDate) {
-		this.changeDate = changeDate;
+	public void setCreated(Date created) {
+		this.created = created;
 	}
 
 	/**
@@ -93,5 +101,15 @@ public class LoanHistory implements java.io.Serializable {
 
 	public void setPersonIP(String personIP) {
 		this.personIP = personIP;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "LOAN_ID", nullable = false)
+	public Loan getLoan() {
+		return loan;
+	}
+
+	public void setLoan(Loan laon) {
+		this.loan = laon;
 	}
 }

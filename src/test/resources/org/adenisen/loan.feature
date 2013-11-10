@@ -9,13 +9,13 @@ Feature: Getting loan
 		When user applied for loan <loan> and term <term> month
 			And application submitted not between <time from> and <time till> 
 			And not selected the max amount
-			And number of applications from a single IP within a day is less then 3		
+			And number of applications from a single IP <IP> within a day is less then 3		
 		Then users loan balance should be <loan> 
 			And term date <term> 
 		
 		Examples:
-		    | loan | term | time from | time till |
-		    | 100  | 3	  | 00:00  	  | 06:00	  |
+		    | loan | term | time from | time till | IP			|
+		    | 100  | 3	  | 00:00  	  | 06:00	  | 10.10.10.10 |
 	    
 	    
 	Scenario Outline: On "My Loans" page the client should be able to extend a loan by clicking "Extend" button. 
