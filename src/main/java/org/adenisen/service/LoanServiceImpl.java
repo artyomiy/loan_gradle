@@ -16,10 +16,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class LoanServiceImpl implements LoanService {
 
-	public List<LoanHistory> readHistory(Loan loan) {
-		return loan.getLoanHistoryList();
-	}
-
 	public Loan save(Loan loan, String ip) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = null;
@@ -27,6 +23,7 @@ public class LoanServiceImpl implements LoanService {
 			tx = session.beginTransaction();
 			createLoanHistory(loan, ip, LoanHistory.LOAN_CREATED);
 			loan = (Loan)session.save(loan);
+			setPersonIp(loan, ip);
 			session.flush();
 			tx.commit();
 		}catch(Exception e){
@@ -60,19 +57,16 @@ public class LoanServiceImpl implements LoanService {
 			calendar.setTime(loan.getTermEnd());
 			calendar.add(Calendar.WEEK_OF_YEAR, Loan.EXTEND_WEEKS_COUNT);
 			loan = (Loan)session.save(loan);
+			setPersonIp(loan, ip);
 			session.flush();
 			tx.commit();
 		}catch(Exception e){
 			if (tx!=null) tx.rollback();
 			return false;
-		} 
+		} finally {
+			session.close();
+		}
 		return true;
-	}
-
-	public boolean isValid(Loan loan, Double MaxAmount, 
-			Date dangerTimeFrom, Date dangerTimeTo) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	public boolean isDangerTime(Loan loan, Date dangerTimeFrom,
@@ -101,12 +95,54 @@ public class LoanServiceImpl implements LoanService {
 		
 		return list.size() >= maxCount;
 	}
-
-	public int getExtendedWeeksCount(Loan loan) {
-		// TODO Auto-generated method stub
-		return 0;
+	
+	public boolean delete(Loan loan) {
+		Session session = HibernateUtil.getCurrentSession();
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			session.delete(loan);
+			session.flush();
+			tx.commit();
+		}catch(Exception e){
+			if (tx!=null) tx.rollback();
+			return false;
+		} finally{
+			session.close();
+		}
+		return true;
 	}
 	
+	public int deleteById(List<Long> ids) {
+		int result;
+		try{
+			Query query = HibernateUtil.getSessionFactory().openSession().
+					createQuery("delete from LOAN where ID in (:idList) ");
+			StringBuilder idList = new StringBuilder();
+			for (Long id : ids){
+				idList.append(id);
+				idList.append(",");
+			}
+			idList.deleteCharAt(idList.length()-1);
+			query.setString("idList", idList.toString());
+			result = query.executeUpdate();
+		}catch (Exception ex){
+			return -1;
+		}
+		
+		return result;
+	}
+	
+	public int getExtendedWeeksCount(Loan loan) {
+		int result = 0;
+		for (LoanHistory hist : loan.getLoanHistoryList()){
+			if (LoanHistory.LOAN_EXTENDED == hist.getHistoryType()){
+				result++;
+			}
+		}
+		return result;
+	}
+
 	private void createLoanHistory(Loan loan, String ip, int histActType) {
 		LoanHistory hist = new LoanHistory();
 		hist.setCreated(new Date());
@@ -118,5 +154,13 @@ public class LoanServiceImpl implements LoanService {
 			hist.setOldEndDate(loan.getTermEnd());
 			hist.setExtendedByWeeks(Loan.EXTEND_WEEKS_COUNT);
 		}
+	}
+	
+	private void setPersonIp(Loan loan, String ip) {
+		if (loan.getAccount() != null &&
+				loan.getAccount().getPerson() != null){
+			loan.getAccount().getPerson().setIp(ip);
+		}
+		
 	}
 }

@@ -73,7 +73,7 @@ public class LoanController {
 	@RequestMapping("loan/history/{index}")
 	public List<LoanHistory> getLoanHistory(@PathVariable int index) {
 		if (account.getLoanList().size() < index){
-			return loanService.readHistory(account.getLoanList().get(index));
+			return account.getLoanList().get(index).getLoanHistoryList();
 		}
 		return null;
 	}

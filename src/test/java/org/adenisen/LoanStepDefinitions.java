@@ -17,6 +17,7 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
  
 public class LoanStepDefinitions {
+	private final String TEST_IP = "10.10.10.10";
 	private Person user;
 	private Account account;
 	
@@ -33,6 +34,7 @@ public class LoanStepDefinitions {
 	@When("^user applied for loan (\\d+) and term (\\d+) month$")
 	public void user_applied_for_loan_and_term_month(int arg1, int arg2) throws Throwable {
 		Loan loan = new Loan(new Double(arg1), arg2);
+		loan.setAccount(account);
 		account.addLoan(loan);
 	}
 	
@@ -57,7 +59,9 @@ public class LoanStepDefinitions {
 
 	@Then("^users loan balance should be (\\d+)$")
 	public void users_loan_balance_should_be(int arg1) throws Throwable {
-		service.save(account.getLoanList().get(0), account.getPerson().getIp());
+		Loan loan = account.getLoanList().get(0);
+		service.save(loan, account.getPerson().getIp());
+		account = loan.getAccount();
 		assertTrue(account.getLoanList().get(0).getAmount() == arg1);
 	}
 	
@@ -68,26 +72,32 @@ public class LoanStepDefinitions {
 	
 	@Given("^user has a loan in his account$")
 	public void user_has_a_loan_in_his_account() throws Throwable {
-//		assertFalse(account.getLoan().isEmpty());
-		assertNull(null);
+//		user = new Person("Alan");
+//		account = new Account();
+//		account.setPerson(user);
+//		Loan loan = new Loan(100.0,2);
+//		loan.setAccount(account);
+//		service.save(loan, TEST_IP);
+		assertFalse(account.getLoanList().isEmpty());
+//		assertNull(null);
 	}
 
 	@When("^user extend a loan$")
 	public void user_extend_a_loan() throws Throwable {
-//		assertTrue(service.extend(account.getLoan().get(0), account.getPerson().getIp()));
-		assertNull(null);
+		Loan loan = account.getLoanList().get(0);
+		Boolean result = service.extend(loan, account.getPerson().getIp());
+		account = loan.getAccount();
+		assertTrue(result);
 	}
 
 	@Then("^term of the loan extended by (\\d+)$")
 	public void term_of_the_loan_extended_by(int arg1) throws Throwable {
-//		assertTrue(arg1 == service.getExtendedWeeksCount(account.getLoan().get(0)));	
-		assertNull(null);
+		assertTrue(arg1 == service.getExtendedWeeksCount(account.getLoanList().get(0)));	
 	}
 
 	@Then("^interest increased by (\\d+.\\d+) factor$")
 	public void interest_increased_by_factor(Double arg1) throws Throwable {
-//		assertTrue(arg1.equals(account.getLoan().get(0).getInterestIndex()));	
-		assertNull(null);
+		assertTrue(arg1.equals(account.getLoanList().get(0).getInterestIndex()));	
 	}
 
 }
